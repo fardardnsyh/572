@@ -1,0 +1,70 @@
+<html>
+  <%- include('head') %>
+  <body>
+    <%- include('header') %>
+    <main>
+      <div class="home-left">
+        <% if (user) {%>
+          <div class="welcome-user">
+            <h2>Welcome, <%= user.user_name %></h1>
+            <button class="button-9" onclick="window.location.href='/log-out';">Log Out</button>        </div>
+          <%- include('new-message-form') %>
+        <% } else { %>
+          <div class="welcome">
+            <h2>Welcome to MembersOnly</h2>
+            <p>Only members can post messages and see the names of other members.</p>
+          </div>
+          <div class="login-box">
+            <h2>Login</h2>
+            <form action="/log-in" method="POST" autocomplete="off">
+              <div class="user-box">
+                <input id="username" name="username" type="text" required=""/>
+                <label>Username</label>
+              </div>
+              <div class="user-box">
+                <input id="password" name="password" type="password" required=""/>
+                <label>Password</label>
+              </div>
+              <button class="button-9">Log In</button>
+            </form>
+            <p>Not a member? <a href="/sign-up">Sign Up</a></p>
+          </div>
+        <%}%>
+      </div>
+      <div class="home-right">
+        <ul class="messageBoard">
+          <% if (messages.length === 0) {%>
+            <p>There are no messages, be first to write one.</p>
+          <%};%>
+          <% messages.forEach( (message) => { %>
+            <li class="message">
+
+            <% if (user) {%>
+              <p class="author">🕶️ <%= message.user_name %></p>
+              <div class="messageTextContainer">
+                <% if (user.isadmin) {%>
+                  <form class="deleteMessageForm" id="deleteMessageForm" action="./<%= message.message_id %>/delete" method="POST">
+                    <input type="hidden" id="message_id" name="message_id" value="<%= message.message_id %>">
+                    <button class="btn delete button-9" type="submit">-</button>
+                  </form>
+                <%};%>
+                <p class="messageText"><%= message.message_text %></p>
+              </div>
+              <% if (user) {%>
+              <p class="date"><%= message.message_date.toLocaleString('en-GB', { timeZone: 'UTC' }) %></p>
+              <%}%>
+              </li>
+            <% } else { %>
+              <p class="author">🕶️ Hidden Member</p>
+              <div class="messageTextContainer">
+                <p class="messageText"><%= message.message_text %></p>
+              </div>
+            <%}%>
+          <%});%>
+
+        </ul>
+      </div>
+    </main>    
+    <%- include('footer') %>
+  </body>
+</html>
